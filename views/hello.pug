@@ -1,0 +1,22 @@
+extends layout
+
+block content
+	p hello
+
+
+
+		.wrapper.ohnooo
+		p.ehllo Hello! my dogs name is #{dog}
+		span#yo yo
+		img.dog(src="dog.jpg", alt="dog")
+
+		p your search string is #{search}
+		img(sec="search.jpg" alt=`Search ${search}`)
+
+		-const upDog = dog.toUpperCase();
+		p upDog = #{upDog}
+
+		h2 
+			| Hello
+			em how are you?
+
