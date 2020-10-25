@@ -34,7 +34,7 @@ exports.addStore = (req, res) => {
 exports.upload = multer(multerOptions).single('photo');
 
 exports.resize = async (req, res, next) => {
-	// check if there is no new file to resize	
+	// check if there is no new file to resize
 	if (!req.file) {
 		next(); //skip to next middleware (create/update)
 		return
@@ -49,7 +49,7 @@ exports.resize = async (req, res, next) => {
 	await photo.resize(800, jimp.AUTO);
 	//save to server
 	await photo.write(`./public/uploads/${req.body.photo}`);
-	//once we have written photo to filesystem - keep going 
+	//once we have written photo to filesystem - keep going
 	next();
 }
 
@@ -102,4 +102,41 @@ exports.updateStore = async (req, res) => {
 	req.flash('seccuss', `Successfully updated <strong>${store.name}</strong>. <a href="/stores/${store.slug}">View Store ➡️</a>`);
 	//2. redirect to the store and tell them it worked
 	res.redirect(`/stores/${store._id}/edit`);
+};
+
+exports.getStoreBySlug = async (req, res, next) => {
+	const store = await Store.findOne({
+		slug: req.params.slug
+	})
+	if (!store) {
+		return next();
+	}
+	res.render('store', {
+		store,
+		title: store.name
+	})
+}
+
+
+exports.getStoresByTag = async (req, res) => {
+	const tag = req.params.tag;
+	const tagQuery = tag || {
+		$exists: true
+	}
+	//get the tags
+	const tagsPromise = Store.getTagsList();
+	//get the stores with this tag. (picked up from request)
+	const storesPromise = Store.find({
+		tags: tagQuery
+	})
+
+	//get both the tags and the stores with promise all (desctructure into tags and stores)
+	const [tags, stores] = await Promise.all([tagsPromise, storesPromise]);
+
+	res.render('tags', {
+		tags,
+		title: 'Tags',
+		tag,
+		stores
+	});
 };

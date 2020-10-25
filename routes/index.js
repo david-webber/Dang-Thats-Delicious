@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const storeController = require('../controllers/storeController');
+const userController = require('../controllers/userController');
+const authController = require('../controllers/authController');
 const {
 	catchErrors
 } = require('../handlers/errorHandlers');
@@ -10,6 +12,7 @@ const {
 router.get("/", catchErrors(storeController.getStores));
 router.get("/stores", catchErrors(storeController.getStores));
 router.get("/add", storeController.addStore);
+
 
 router.post("/add",
 	storeController.upload,
@@ -26,6 +29,11 @@ router.post("/add/:id",
 router.get("/stores/:id/edit", catchErrors(storeController.editStore));
 
 
+router.get("/store/:slug", catchErrors(storeController.getStoreBySlug))
+
+router.get("/tags", catchErrors(storeController.getStoresByTag));
+router.get("/tags/:tag", catchErrors(storeController.getStoresByTag));
+
 // Do work here
 // router.get("/", (req, res) => {
 //   // res.send("Hey! It works!");
@@ -41,5 +49,21 @@ router.get("/stores/:id/edit", catchErrors(storeController.editStore));
 //   const reverse = [...req.params.name].reverse().join("");
 //   res.send(reverse);
 // });
+
+router.get('/login', userController.loginForm);
+
+router.get('/register', userController.registerForm);
+
+router.post('/register',
+	// 1.validate the Data
+	userController.validateRegister,
+	// 2.register the user
+	userController.registerUser,
+	// 3.log the user in with the authcontroller
+	authController.login
+);
+
+
+
 
 module.exports = router;
