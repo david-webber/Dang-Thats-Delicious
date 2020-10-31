@@ -54,3 +54,26 @@ exports.registerUser = async (req, res, next) => {
 	next(); //nextt will call authcontroller
 
 }
+
+
+
+exports.account = (req,res) =>{
+	res.render('account', {title:'Edit your account'})
+}
+
+exports.updateAccount = async(req,res) => {
+	//get data from posted form
+	const updates = {
+		name: req.body.name,
+		email: req.body.email
+	}
+	//use mongo find one and update (query,user,options)
+	const user = await User.findOneAndUpdate(
+		{ _id: req.user._id},
+		{ $set: updates}, //set the update options ontop of the data (if you are only updating a couple of pieces)
+		{ new: true, runValidators: true, context: 'query'}
+	);
+
+	req.flash('success', 'Account updated');
+	res.redirect('/account')
+}
