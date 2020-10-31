@@ -43,6 +43,13 @@ const storeSchema = new mongoose.Schema({
 	}
 });
 
+//Define indexes on database
+storeSchema.index({
+	name: 'text',
+	description: 'text'
+});
+
+
 //set a slug before save, when name is modified
 storeSchema.pre('save', async function (next) {
 	if (!this.isModified('name')) {

@@ -107,7 +107,7 @@ exports.updateStore = async (req, res) => {
 		new: true, // return the new store store instead of old...
 		runValidators: true, //make sure data passed is valid from model (created in store.js)
 	}).exec();
-	req.flash('seccuss', `Successfully updated <strong>${store.name}</strong>. <a href="/stores/${store.slug}">View Store ➡️</a>`);
+	req.flash('success', `Successfully updated <strong>${store.name}</strong>. <a href="/store/${store.slug}">View Store ➡️</a>`);
 	//2. redirect to the store and tell them it worked
 	res.redirect(`/stores/${store._id}/edit`);
 };
@@ -148,3 +148,27 @@ exports.getStoresByTag = async (req, res) => {
 		stores
 	});
 };
+
+
+exports.searchStores = async (req,res) => {
+	// res.json(req.query);
+	//find the stores by looking up the text index
+	const stores = await Store
+	//find stores that match by query param (searching text index)
+	.find({
+		$text:{
+			$search: req.query.q
+		}
+	},{
+		//Add (prooject) score field to results, scored against text frequency
+		score: {$meta : 'textScore'} //score results by query
+	})
+	//sort results by score field
+	.sort(
+		{score:
+			{$meta: 'textScore'}
+		})
+	//limit to 5 results
+	.limit(5)
+	res.json(stores);
+}
