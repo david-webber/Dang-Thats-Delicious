@@ -1,4 +1,5 @@
 const MapboxGeocoder = require('@mapbox/mapbox-gl-geocoder')
+import loadPlaces from './loadPlaces'
 
 function autocomplete(input, latInput, lngInput) {
 	if (!input) return
@@ -13,14 +14,25 @@ function autocomplete(input, latInput, lngInput) {
 	})
 
 	geocoder.addTo('#search-address')
-	geocoder.on('result', e => {
-		input.value = e.result.place_name
-		lngInput.value = e.result.geometry.coordinates[0]
-		latInput.value = e.result.geometry.coordinates[1]
-	})
+
+	if(input.id === "mapSearch"){
+		geocoder.on('result', e => {
+			input.value = e.result.place_name
+			loadPlaces(e.result.center[1], e.result.center[0])
+		})
+	}else{
+
+		geocoder.on('result', e => {
+			input.value = e.result.place_name
+			lngInput.value = e.result.geometry.coordinates[0]
+			latInput.value = e.result.geometry.coordinates[1]
+		})
+	}
 
 	document.querySelector('#search-address>div').style =
 		'width: 100%; max-width: unset; border: 1px solid #e6e6e6; box-shadow: unset; border-radius: 0; z-index: 1000; font-family: sans-serif; font-size: 100%; line-height: 1.15; margin: 0 0 10px 0;'
+
+
 }
 
 export default autocomplete

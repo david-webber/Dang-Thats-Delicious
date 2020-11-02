@@ -50,6 +50,9 @@ storeSchema.index({
 });
 
 
+storeSchema.index({location: '2dsphere'});
+
+
 //set a slug before save, when name is modified
 storeSchema.pre('save', async function (next) {
 	if (!this.isModified('name')) {

@@ -172,3 +172,27 @@ exports.searchStores = async (req,res) => {
 	.limit(5)
 	res.json(stores);
 }
+
+exports.mapStores = async(req,res)=>{
+	//get lat and lng from query params, map over and parsefloat so we have numbers instead of strings
+	const coordinates = [req.query.lng,req.query.lat].map(parseFloat);
+	const q = {
+		location: {
+			$near: { //use mongo db near fn
+				$geometry: {
+					type: 'Point',
+					coordinates: coordinates
+				},
+				$maxDistance: 10000 //10km (10,000m)
+			}
+		}
+	}
+	const stores = await Store.find(q).select('slug name description location photo').limit(10);
+	res.json(stores);
+
+
+}
+
+exports.mapPage = (req,res) => {
+	res.render('map', {title:'Map'})
+}

@@ -1,0 +1,10 @@
+extends layout
+
+block content
+	.inner
+		h2= title
+		.map
+			.autocomplete
+				#search-address
+				input(type="text", id="mapSearch", name="location[address]")
+			#map
