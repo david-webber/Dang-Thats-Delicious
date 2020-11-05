@@ -63,12 +63,11 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 69);
+/******/ 	return __webpack_require__(__webpack_require__.s = 71);
 /******/ })
 /************************************************************************/
-/******/ ({
-
-/***/ 0:
+/******/ ([
+/* 0 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -76,7 +75,7 @@
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-var bind = __webpack_require__(13);
+var bind = __webpack_require__(16);
 
 /*global toString:true*/
 
@@ -371,8 +370,7 @@ module.exports = {
 };
 
 /***/ }),
-
-/***/ 1:
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -399,8 +397,749 @@ function extend() {
 }
 
 /***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
 
-/***/ 10:
+"use strict";
+
+
+module.exports = {
+  API_ORIGIN: 'https://api.mapbox.com',
+  EVENT_PROGRESS_DOWNLOAD: 'downloadProgress',
+  EVENT_PROGRESS_UPLOAD: 'uploadProgress',
+  EVENT_ERROR: 'error',
+  EVENT_RESPONSE: 'response',
+  ERROR_HTTP: 'HttpError',
+  ERROR_REQUEST_ABORTED: 'RequestAbortedError'
+};
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+// based on https://gist.github.com/paulirish/12fb951a8b893a454b32
+
+var $ = document.querySelector.bind(document);
+var $$ = document.querySelectorAll.bind(document);
+
+Node.prototype.on = window.on = function (name, fn) {
+  this.addEventListener(name, fn);
+};
+
+NodeList.prototype.__proto__ = Array.prototype; // eslint-disable-line
+
+NodeList.prototype.on = NodeList.prototype.addEventListener = function (name, fn) {
+  this.forEach(function (elem) {
+    elem.on(name, fn);
+  });
+};
+
+exports.$ = $;
+exports.$$ = $$;
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = __webpack_require__(41);
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process) {
+
+var utils = __webpack_require__(0);
+var normalizeHeaderName = __webpack_require__(55);
+
+var PROTECTION_PREFIX = /^\)\]\}',?\n/;
+var DEFAULT_CONTENT_TYPE = {
+  'Content-Type': 'application/x-www-form-urlencoded'
+};
+
+function setContentTypeIfUnset(headers, value) {
+  if (!utils.isUndefined(headers) && utils.isUndefined(headers['Content-Type'])) {
+    headers['Content-Type'] = value;
+  }
+}
+
+function getDefaultAdapter() {
+  var adapter;
+  if (typeof XMLHttpRequest !== 'undefined') {
+    // For browsers use XHR adapter
+    adapter = __webpack_require__(12);
+  } else if (typeof process !== 'undefined') {
+    // For node use HTTP adapter
+    adapter = __webpack_require__(12);
+  }
+  return adapter;
+}
+
+var defaults = {
+  adapter: getDefaultAdapter(),
+
+  transformRequest: [function transformRequest(data, headers) {
+    normalizeHeaderName(headers, 'Content-Type');
+    if (utils.isFormData(data) || utils.isArrayBuffer(data) || utils.isStream(data) || utils.isFile(data) || utils.isBlob(data)) {
+      return data;
+    }
+    if (utils.isArrayBufferView(data)) {
+      return data.buffer;
+    }
+    if (utils.isURLSearchParams(data)) {
+      setContentTypeIfUnset(headers, 'application/x-www-form-urlencoded;charset=utf-8');
+      return data.toString();
+    }
+    if (utils.isObject(data)) {
+      setContentTypeIfUnset(headers, 'application/json;charset=utf-8');
+      return JSON.stringify(data);
+    }
+    return data;
+  }],
+
+  transformResponse: [function transformResponse(data) {
+    /*eslint no-param-reassign:0*/
+    if (typeof data === 'string') {
+      data = data.replace(PROTECTION_PREFIX, '');
+      try {
+        data = JSON.parse(data);
+      } catch (e) {/* Ignore */}
+    }
+    return data;
+  }],
+
+  timeout: 0,
+
+  xsrfCookieName: 'XSRF-TOKEN',
+  xsrfHeaderName: 'X-XSRF-TOKEN',
+
+  maxContentLength: -1,
+
+  validateStatus: function validateStatus(status) {
+    return status >= 200 && status < 300;
+  }
+};
+
+defaults.headers = {
+  common: {
+    'Accept': 'application/json, text/plain, */*'
+  }
+};
+
+utils.forEach(['delete', 'get', 'head'], function forEachMehtodNoData(method) {
+  defaults.headers[method] = {};
+});
+
+utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
+  defaults.headers[method] = utils.merge(DEFAULT_CONTENT_TYPE);
+});
+
+module.exports = defaults;
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+// shim for using process in browser
+var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout() {
+    throw new Error('clearTimeout has not been defined');
+}
+(function () {
+    try {
+        if (typeof setTimeout === 'function') {
+            cachedSetTimeout = setTimeout;
+        } else {
+            cachedSetTimeout = defaultSetTimout;
+        }
+    } catch (e) {
+        cachedSetTimeout = defaultSetTimout;
+    }
+    try {
+        if (typeof clearTimeout === 'function') {
+            cachedClearTimeout = clearTimeout;
+        } else {
+            cachedClearTimeout = defaultClearTimeout;
+        }
+    } catch (e) {
+        cachedClearTimeout = defaultClearTimeout;
+    }
+})();
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch (e) {
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch (e) {
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e) {
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e) {
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+}
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = runTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while (len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    runClearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        runTimeout(drainQueue);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) {
+    return [];
+};
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () {
+    return '/';
+};
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function () {
+    return 0;
+};
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var g;
+
+// This works in non-strict mode
+g = function () {
+	return this;
+}();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || Function("return this")() || (1, eval)("this");
+} catch (e) {
+	// This works if the window reference is available
+	if ((typeof window === "undefined" ? "undefined" : _typeof(window)) === "object") g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _axios = __webpack_require__(4);
+
+var _axios2 = _interopRequireDefault(_axios);
+
+var _bling = __webpack_require__(3);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function loadPlaces() {
+	var lat = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 43.2;
+	var lng = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : -79.8;
+
+
+	var mapOptions = {
+		center: [lng, lat],
+		zoom: 12,
+		style: 'mapbox://styles/mapbox/light-v10'
+	};
+
+	mapboxgl.accessToken = 'pk.eyJ1IjoiamVuYXJvOTQiLCJhIjoiY2pzbnBpajh3MGV5MTQ0cnJ3dmJlczFqbiJ9.Aktxa1EqTzpy7yEaBDM1xQ'; // replace this with your access token
+	mapOptions.container = (0, _bling.$)('#map');
+
+	var map = new mapboxgl.Map(mapOptions);
+
+	_axios2.default.get('/api/stores/near?lat=' + lat + '&lng=' + lng).then(function (res) {
+		var places = res.data;
+		if (!places.length) {
+			alert('no places found');
+			return;
+		}
+
+		var bounds = new mapboxgl.LngLatBounds();
+
+		places.map(function (place) {
+			var html = '\n\t\t\t\t<div class="popup">\n\t\t\t\t\t<a href="/store/' + place.slug + '">\n\t\t\t\t\t\t<img src="/uploads/' + (place.photo || 'store.png') + '" alt="' + place.name + '" width="100%">\n\t\t\t\t\t\t<p><strong>' + place.name + '</strong> - <small>' + place.location.address + '</small></p>\n\t\t\t\t\t</a>\n\t\t\t\t</div>\n\t\t\t';
+			var marker = new mapboxgl.Marker().setLngLat(place.location.coordinates).setPopup(new mapboxgl.Popup().setHTML(html)).addTo(map);
+			marker.place = place;
+			bounds.extend(place.location.coordinates);
+			return marker;
+		});
+		map.fitBounds(bounds, { padding: 100 });
+	});
+}
+
+exports.default = loadPlaces;
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var browser = __webpack_require__(28);
+var MapiClient = __webpack_require__(10);
+
+function BrowserClient(options) {
+  MapiClient.call(this, options);
+}
+BrowserClient.prototype = Object.create(MapiClient.prototype);
+BrowserClient.prototype.constructor = BrowserClient;
+
+BrowserClient.prototype.sendRequest = browser.browserSend;
+BrowserClient.prototype.abortRequest = browser.browserAbort;
+
+/**
+ * Create a client for the browser.
+ *
+ * @param {Object} options
+ * @param {string} options.accessToken
+ * @param {string} [options.origin]
+ * @returns {MapiClient}
+ */
+function createBrowserClient(options) {
+  return new BrowserClient(options);
+}
+
+module.exports = createBrowserClient;
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var parseToken = __webpack_require__(11);
+var MapiRequest = __webpack_require__(30);
+var constants = __webpack_require__(2);
+
+/**
+ * A low-level Mapbox API client. Use it to create service clients
+ * that share the same configuration.
+ *
+ * Services and `MapiRequest`s use the underlying `MapiClient` to
+ * determine how to create, send, and abort requests in a way
+ * that is appropriate to the configuration and environment
+ * (Node or the browser).
+ *
+ * @class MapiClient
+ * @property {string} accessToken - The Mapbox access token assigned
+ *   to this client.
+ * @property {string} [origin] - The origin
+ *   to use for API requests. Defaults to https://api.mapbox.com.
+ */
+
+function MapiClient(options) {
+  if (!options || !options.accessToken) {
+    throw new Error('Cannot create a client without an access token');
+  }
+  // Try parsing the access token to determine right away if it's valid.
+  parseToken(options.accessToken);
+
+  this.accessToken = options.accessToken;
+  this.origin = options.origin || constants.API_ORIGIN;
+}
+
+MapiClient.prototype.createRequest = function createRequest(requestOptions) {
+  return new MapiRequest(this, requestOptions);
+};
+
+module.exports = MapiClient;
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var base64 = __webpack_require__(58);
+
+var tokenCache = {};
+
+function parseToken(token) {
+  if (tokenCache[token]) {
+    return tokenCache[token];
+  }
+
+  var parts = token.split('.');
+  var usage = parts[0];
+  var rawPayload = parts[1];
+  if (!rawPayload) {
+    throw new Error('Invalid token');
+  }
+
+  var parsedPayload = parsePaylod(rawPayload);
+
+  var result = {
+    usage: usage,
+    user: parsedPayload.u
+  };
+  if (has(parsedPayload, 'a')) result.authorization = parsedPayload.a;
+  if (has(parsedPayload, 'exp')) result.expires = parsedPayload.exp * 1000;
+  if (has(parsedPayload, 'iat')) result.created = parsedPayload.iat * 1000;
+  if (has(parsedPayload, 'scopes')) result.scopes = parsedPayload.scopes;
+  if (has(parsedPayload, 'client')) result.client = parsedPayload.client;
+  if (has(parsedPayload, 'll')) result.lastLogin = parsedPayload.ll;
+  if (has(parsedPayload, 'iu')) result.impersonator = parsedPayload.iu;
+
+  tokenCache[token] = result;
+  return result;
+}
+
+function parsePaylod(rawPayload) {
+  try {
+    return JSON.parse(base64.decode(rawPayload));
+  } catch (parseError) {
+    throw new Error('Invalid token');
+  }
+}
+
+function has(obj, key) {
+  return Object.prototype.hasOwnProperty.call(obj, key);
+}
+
+module.exports = parseToken;
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process) {
+
+var utils = __webpack_require__(0);
+var settle = __webpack_require__(47);
+var buildURL = __webpack_require__(50);
+var parseHeaders = __webpack_require__(56);
+var isURLSameOrigin = __webpack_require__(54);
+var createError = __webpack_require__(15);
+var btoa = typeof window !== 'undefined' && window.btoa && window.btoa.bind(window) || __webpack_require__(49);
+
+module.exports = function xhrAdapter(config) {
+  return new Promise(function dispatchXhrRequest(resolve, reject) {
+    var requestData = config.data;
+    var requestHeaders = config.headers;
+
+    if (utils.isFormData(requestData)) {
+      delete requestHeaders['Content-Type']; // Let the browser set it
+    }
+
+    var request = new XMLHttpRequest();
+    var loadEvent = 'onreadystatechange';
+    var xDomain = false;
+
+    // For IE 8/9 CORS support
+    // Only supports POST and GET calls and doesn't returns the response headers.
+    // DON'T do this for testing b/c XMLHttpRequest is mocked, not XDomainRequest.
+    if (process.env.NODE_ENV !== 'test' && typeof window !== 'undefined' && window.XDomainRequest && !('withCredentials' in request) && !isURLSameOrigin(config.url)) {
+      request = new window.XDomainRequest();
+      loadEvent = 'onload';
+      xDomain = true;
+      request.onprogress = function handleProgress() {};
+      request.ontimeout = function handleTimeout() {};
+    }
+
+    // HTTP basic authentication
+    if (config.auth) {
+      var username = config.auth.username || '';
+      var password = config.auth.password || '';
+      requestHeaders.Authorization = 'Basic ' + btoa(username + ':' + password);
+    }
+
+    request.open(config.method.toUpperCase(), buildURL(config.url, config.params, config.paramsSerializer), true);
+
+    // Set the request timeout in MS
+    request.timeout = config.timeout;
+
+    // Listen for ready state
+    request[loadEvent] = function handleLoad() {
+      if (!request || request.readyState !== 4 && !xDomain) {
+        return;
+      }
+
+      // The request errored out and we didn't get a response, this will be
+      // handled by onerror instead
+      // With one exception: request that using file: protocol, most browsers
+      // will return status as 0 even though it's a successful request
+      if (request.status === 0 && !(request.responseURL && request.responseURL.indexOf('file:') === 0)) {
+        return;
+      }
+
+      // Prepare the response
+      var responseHeaders = 'getAllResponseHeaders' in request ? parseHeaders(request.getAllResponseHeaders()) : null;
+      var responseData = !config.responseType || config.responseType === 'text' ? request.responseText : request.response;
+      var response = {
+        data: responseData,
+        // IE sends 1223 instead of 204 (https://github.com/mzabriskie/axios/issues/201)
+        status: request.status === 1223 ? 204 : request.status,
+        statusText: request.status === 1223 ? 'No Content' : request.statusText,
+        headers: responseHeaders,
+        config: config,
+        request: request
+      };
+
+      settle(resolve, reject, response);
+
+      // Clean up request
+      request = null;
+    };
+
+    // Handle low level network errors
+    request.onerror = function handleError() {
+      // Real errors are hidden from us by the browser
+      // onerror should only fire if it's a network error
+      reject(createError('Network Error', config));
+
+      // Clean up request
+      request = null;
+    };
+
+    // Handle timeout
+    request.ontimeout = function handleTimeout() {
+      reject(createError('timeout of ' + config.timeout + 'ms exceeded', config, 'ECONNABORTED'));
+
+      // Clean up request
+      request = null;
+    };
+
+    // Add xsrf header
+    // This is only done if running in a standard browser environment.
+    // Specifically not if we're in a web worker, or react-native.
+    if (utils.isStandardBrowserEnv()) {
+      var cookies = __webpack_require__(52);
+
+      // Add xsrf header
+      var xsrfValue = (config.withCredentials || isURLSameOrigin(config.url)) && config.xsrfCookieName ? cookies.read(config.xsrfCookieName) : undefined;
+
+      if (xsrfValue) {
+        requestHeaders[config.xsrfHeaderName] = xsrfValue;
+      }
+    }
+
+    // Add headers to the request
+    if ('setRequestHeader' in request) {
+      utils.forEach(requestHeaders, function setRequestHeader(val, key) {
+        if (typeof requestData === 'undefined' && key.toLowerCase() === 'content-type') {
+          // Remove Content-Type if data is undefined
+          delete requestHeaders[key];
+        } else {
+          // Otherwise add header to the request
+          request.setRequestHeader(key, val);
+        }
+      });
+    }
+
+    // Add withCredentials to request if needed
+    if (config.withCredentials) {
+      request.withCredentials = true;
+    }
+
+    // Add responseType to request if needed
+    if (config.responseType) {
+      try {
+        request.responseType = config.responseType;
+      } catch (e) {
+        if (request.responseType !== 'json') {
+          throw e;
+        }
+      }
+    }
+
+    // Handle progress if needed
+    if (typeof config.onDownloadProgress === 'function') {
+      request.addEventListener('progress', config.onDownloadProgress);
+    }
+
+    // Not all browsers support upload events
+    if (typeof config.onUploadProgress === 'function' && request.upload) {
+      request.upload.addEventListener('progress', config.onUploadProgress);
+    }
+
+    if (config.cancelToken) {
+      // Handle cancellation
+      config.cancelToken.promise.then(function onCanceled(cancel) {
+        if (!request) {
+          return;
+        }
+
+        request.abort();
+        reject(cancel);
+        // Clean up request
+        request = null;
+      });
+    }
+
+    if (requestData === undefined) {
+      requestData = null;
+    }
+
+    // Send the request
+    request.send(requestData);
+  });
+};
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
+
+/***/ }),
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -426,8 +1165,7 @@ Cancel.prototype.__CANCEL__ = true;
 module.exports = Cancel;
 
 /***/ }),
-
-/***/ 11:
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -438,14 +1176,13 @@ module.exports = function isCancel(value) {
 };
 
 /***/ }),
-
-/***/ 12:
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var enhanceError = __webpack_require__(44);
+var enhanceError = __webpack_require__(46);
 
 /**
  * Create an Error with the specified message, config, error code, and response.
@@ -462,8 +1199,7 @@ module.exports = function createError(message, config, code, response) {
 };
 
 /***/ }),
-
-/***/ 13:
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -480,8 +1216,7 @@ module.exports = function bind(fn, thisArg) {
 };
 
 /***/ }),
-
-/***/ 14:
+/* 17 */
 /***/ (function(module, exports) {
 
 /* WEBPACK VAR INJECTION */(function(__webpack_amd_options__) {/* globals __webpack_amd_options__ */
@@ -490,8 +1225,7 @@ module.exports = __webpack_amd_options__;
 /* WEBPACK VAR INJECTION */}.call(exports, {}))
 
 /***/ }),
-
-/***/ 15:
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -501,13 +1235,13 @@ Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 
-var _loadPlaces = __webpack_require__(383);
+var _loadPlaces = __webpack_require__(8);
 
 var _loadPlaces2 = _interopRequireDefault(_loadPlaces);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var MapboxGeocoder = __webpack_require__(22);
+var MapboxGeocoder = __webpack_require__(25);
 
 
 function autocomplete(input, latInput, lngInput) {
@@ -543,39 +1277,7 @@ function autocomplete(input, latInput, lngInput) {
 exports.default = autocomplete;
 
 /***/ }),
-
-/***/ 16:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-// based on https://gist.github.com/paulirish/12fb951a8b893a454b32
-
-var $ = document.querySelector.bind(document);
-var $$ = document.querySelectorAll.bind(document);
-
-Node.prototype.on = window.on = function (name, fn) {
-  this.addEventListener(name, fn);
-};
-
-NodeList.prototype.__proto__ = Array.prototype; // eslint-disable-line
-
-NodeList.prototype.on = NodeList.prototype.addEventListener = function (name, fn) {
-  this.forEach(function (elem) {
-    elem.on(name, fn);
-  });
-};
-
-exports.$ = $;
-exports.$$ = $$;
-
-/***/ }),
-
-/***/ 17:
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -585,11 +1287,49 @@ Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 
-var _axios = __webpack_require__(38);
+var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _dompurify = __webpack_require__(57);
+var _bling = __webpack_require__(3);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function ajaxHeart(e) {
+	var _this = this;
+
+	e.preventDefault();
+	_axios2.default.post(this.action).then(function (res) {
+		var isHearted = _this.heart.classList.toggle('heart__button--hearted'); //this.heart picked up from the name element in form.
+		//update the counter in header with heart length
+		(0, _bling.$)('.heart-count').textContent = res.data.hearts.length;
+		if (isHearted) {
+			_this.heart.classList.add('heart__button--float');
+			setTimeout(function () {
+				return _this.heart.classList.remove('heart__button--float');
+			}, 2500);
+		}
+	}).catch(console.error);
+}
+
+exports.default = ajaxHeart;
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _axios = __webpack_require__(4);
+
+var _axios2 = _interopRequireDefault(_axios);
+
+var _dompurify = __webpack_require__(59);
 
 var _dompurify2 = _interopRequireDefault(_dompurify);
 
@@ -664,15 +1404,13 @@ function typeAhead(search) {
 exports.default = typeAhead;
 
 /***/ }),
-
-/***/ 18:
+/* 21 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
-
-/***/ 19:
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -684,7 +1422,7 @@ exports.default = typeAhead;
  * They can also return a function for a custom error message.
  */
 
-var isPlainObject = __webpack_require__(61);
+var isPlainObject = __webpack_require__(63);
 var xtend = __webpack_require__(1);
 
 var DEFAULT_ERROR_PATH = 'value';
@@ -1033,32 +1771,13 @@ v.processMessage = processMessage;
 module.exports = v;
 
 /***/ }),
-
-/***/ 2:
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports = {
-  API_ORIGIN: 'https://api.mapbox.com',
-  EVENT_PROGRESS_DOWNLOAD: 'downloadProgress',
-  EVENT_PROGRESS_UPLOAD: 'uploadProgress',
-  EVENT_ERROR: 'error',
-  EVENT_RESPONSE: 'response',
-  ERROR_HTTP: 'HttpError',
-  ERROR_REQUEST_ABORTED: 'RequestAbortedError'
-};
-
-/***/ }),
-
-/***/ 20:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var nanoid = __webpack_require__(63);
+var nanoid = __webpack_require__(65);
 
 /**
  * Construct a new mapbox event client to send interaction events to the mapbox event service
@@ -1365,8 +2084,7 @@ MapboxEventManager.prototype = {
 module.exports = MapboxEventManager;
 
 /***/ }),
-
-/***/ 21:
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1392,23 +2110,22 @@ module.exports = {
 };
 
 /***/ }),
-
-/***/ 22:
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var Typeahead = __webpack_require__(65);
-var debounce = __webpack_require__(62);
+var Typeahead = __webpack_require__(67);
+var debounce = __webpack_require__(64);
 var extend = __webpack_require__(1);
-var EventEmitter = __webpack_require__(59).EventEmitter;
-var exceptions = __webpack_require__(21);
-var MapboxClient = __webpack_require__(24);
-var mbxGeocoder = __webpack_require__(32);
-var MapboxEventManager = __webpack_require__(20);
-var localization = __webpack_require__(23);
-var subtag = __webpack_require__(64);
+var EventEmitter = __webpack_require__(61).EventEmitter;
+var exceptions = __webpack_require__(24);
+var MapboxClient = __webpack_require__(27);
+var mbxGeocoder = __webpack_require__(35);
+var MapboxEventManager = __webpack_require__(23);
+var localization = __webpack_require__(26);
+var subtag = __webpack_require__(66);
 
 /**
  * A geocoder component using the [Mapbox Geocoding API](https://docs.mapbox.com/api/search/#geocoding)
@@ -2371,8 +3088,7 @@ MapboxGeocoder.prototype = {
 module.exports = MapboxGeocoder;
 
 /***/ }),
-
-/***/ 23:
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2415,29 +3131,27 @@ var placeholder = {
 module.exports = { placeholder: placeholder };
 
 /***/ }),
-
-/***/ 24:
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var client = __webpack_require__(6);
+var client = __webpack_require__(9);
 
 module.exports = client;
 
 /***/ }),
-
-/***/ 25:
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var MapiResponse = __webpack_require__(28);
-var MapiError = __webpack_require__(26);
+var MapiResponse = __webpack_require__(31);
+var MapiError = __webpack_require__(29);
 var constants = __webpack_require__(2);
-var parseHeaders = __webpack_require__(29);
+var parseHeaders = __webpack_require__(32);
 
 // Keys are request IDs, values are XHRs.
 var requestsUnderway = {};
@@ -2553,8 +3267,7 @@ module.exports = {
 };
 
 /***/ }),
-
-/***/ 26:
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2624,17 +3337,16 @@ function MapiError(options) {
 module.exports = MapiError;
 
 /***/ }),
-
-/***/ 27:
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var parseToken = __webpack_require__(8);
+var parseToken = __webpack_require__(11);
 var xtend = __webpack_require__(1);
-var EventEmitter = __webpack_require__(58);
-var urlUtils = __webpack_require__(31);
+var EventEmitter = __webpack_require__(60);
+var urlUtils = __webpack_require__(34);
 var constants = __webpack_require__(2);
 
 var requestId = 1;
@@ -2885,14 +3597,13 @@ MapiRequest.prototype._extend = function _extend(options) {
 module.exports = MapiRequest;
 
 /***/ }),
-
-/***/ 28:
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var parseLinkHeader = __webpack_require__(30);
+var parseLinkHeader = __webpack_require__(33);
 
 /**
  * A Mapbox API response.
@@ -2952,8 +3663,7 @@ MapiResponse.prototype.nextPage = function nextPage() {
 module.exports = MapiResponse;
 
 /***/ }),
-
-/***/ 29:
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2996,104 +3706,7 @@ function parseHeaders(raw) {
 module.exports = parseHeaders;
 
 /***/ }),
-
-/***/ 3:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(process) {
-
-var utils = __webpack_require__(0);
-var normalizeHeaderName = __webpack_require__(53);
-
-var PROTECTION_PREFIX = /^\)\]\}',?\n/;
-var DEFAULT_CONTENT_TYPE = {
-  'Content-Type': 'application/x-www-form-urlencoded'
-};
-
-function setContentTypeIfUnset(headers, value) {
-  if (!utils.isUndefined(headers) && utils.isUndefined(headers['Content-Type'])) {
-    headers['Content-Type'] = value;
-  }
-}
-
-function getDefaultAdapter() {
-  var adapter;
-  if (typeof XMLHttpRequest !== 'undefined') {
-    // For browsers use XHR adapter
-    adapter = __webpack_require__(9);
-  } else if (typeof process !== 'undefined') {
-    // For node use HTTP adapter
-    adapter = __webpack_require__(9);
-  }
-  return adapter;
-}
-
-var defaults = {
-  adapter: getDefaultAdapter(),
-
-  transformRequest: [function transformRequest(data, headers) {
-    normalizeHeaderName(headers, 'Content-Type');
-    if (utils.isFormData(data) || utils.isArrayBuffer(data) || utils.isStream(data) || utils.isFile(data) || utils.isBlob(data)) {
-      return data;
-    }
-    if (utils.isArrayBufferView(data)) {
-      return data.buffer;
-    }
-    if (utils.isURLSearchParams(data)) {
-      setContentTypeIfUnset(headers, 'application/x-www-form-urlencoded;charset=utf-8');
-      return data.toString();
-    }
-    if (utils.isObject(data)) {
-      setContentTypeIfUnset(headers, 'application/json;charset=utf-8');
-      return JSON.stringify(data);
-    }
-    return data;
-  }],
-
-  transformResponse: [function transformResponse(data) {
-    /*eslint no-param-reassign:0*/
-    if (typeof data === 'string') {
-      data = data.replace(PROTECTION_PREFIX, '');
-      try {
-        data = JSON.parse(data);
-      } catch (e) {/* Ignore */}
-    }
-    return data;
-  }],
-
-  timeout: 0,
-
-  xsrfCookieName: 'XSRF-TOKEN',
-  xsrfHeaderName: 'X-XSRF-TOKEN',
-
-  maxContentLength: -1,
-
-  validateStatus: function validateStatus(status) {
-    return status >= 200 && status < 300;
-  }
-};
-
-defaults.headers = {
-  common: {
-    'Accept': 'application/json, text/plain, */*'
-  }
-};
-
-utils.forEach(['delete', 'get', 'head'], function forEachMehtodNoData(method) {
-  defaults.headers[method] = {};
-});
-
-utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
-  defaults.headers[method] = utils.merge(DEFAULT_CONTENT_TYPE);
-});
-
-module.exports = defaults;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
-
-/***/ }),
-
-/***/ 30:
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3174,8 +3787,7 @@ function parseLinkHeader(linkHeader) {
 module.exports = parseLinkHeader;
 
 /***/ }),
-
-/***/ 31:
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3300,18 +3912,17 @@ module.exports = {
 };
 
 /***/ }),
-
-/***/ 32:
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var xtend = __webpack_require__(1);
-var v = __webpack_require__(37);
-var pick = __webpack_require__(35);
-var stringifyBooleans = __webpack_require__(36);
-var createServiceFactory = __webpack_require__(33);
+var v = __webpack_require__(40);
+var pick = __webpack_require__(38);
+var stringifyBooleans = __webpack_require__(39);
+var createServiceFactory = __webpack_require__(36);
 
 /**
  * Geocoding API service.
@@ -3469,16 +4080,15 @@ Geocoding.reverseGeocode = function (config) {
 module.exports = createServiceFactory(Geocoding);
 
 /***/ }),
-
-/***/ 33:
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var MapiClient = __webpack_require__(7);
+var MapiClient = __webpack_require__(10);
 // This will create the environment-appropriate client.
-var createClient = __webpack_require__(6);
+var createClient = __webpack_require__(9);
 
 function createServiceFactory(ServicePrototype) {
   return function (clientOrConfig) {
@@ -3497,8 +4107,7 @@ function createServiceFactory(ServicePrototype) {
 module.exports = createServiceFactory;
 
 /***/ }),
-
-/***/ 34:
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3514,8 +4123,7 @@ function objectMap(obj, cb) {
 module.exports = objectMap;
 
 /***/ }),
-
-/***/ 35:
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3550,14 +4158,13 @@ function pick(source, keys) {
 module.exports = pick;
 
 /***/ }),
-
-/***/ 36:
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var objectMap = __webpack_require__(34);
+var objectMap = __webpack_require__(37);
 
 /**
  * Stringify all the boolean values in an object, so true becomes "true".
@@ -3574,15 +4181,14 @@ function stringifyBoolean(obj) {
 module.exports = stringifyBoolean;
 
 /***/ }),
-
-/***/ 37:
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(global) {
 
 var xtend = __webpack_require__(1);
-var v = __webpack_require__(19);
+var v = __webpack_require__(22);
 
 function file(value) {
   // If we're in a browser so Blob is available, the file must be that.
@@ -3628,88 +4234,19 @@ module.exports = xtend(v, {
   coordinates: coordinates,
   assertShape: assertShape
 });
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
-
-/***/ 38:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = __webpack_require__(39);
-
-/***/ }),
-
-/***/ 383:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-
-var _axios = __webpack_require__(38);
-
-var _axios2 = _interopRequireDefault(_axios);
-
-var _bling = __webpack_require__(16);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function loadPlaces() {
-	var lat = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 43.2;
-	var lng = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : -79.8;
-
-
-	var mapOptions = {
-		center: [lng, lat],
-		zoom: 12,
-		style: 'mapbox://styles/mapbox/light-v10'
-	};
-
-	mapboxgl.accessToken = 'pk.eyJ1IjoiamVuYXJvOTQiLCJhIjoiY2pzbnBpajh3MGV5MTQ0cnJ3dmJlczFqbiJ9.Aktxa1EqTzpy7yEaBDM1xQ'; // replace this with your access token
-	mapOptions.container = (0, _bling.$)('#map');
-
-	var map = new mapboxgl.Map(mapOptions);
-
-	_axios2.default.get('/api/stores/near?lat=' + lat + '&lng=' + lng).then(function (res) {
-		var places = res.data;
-		if (!places.length) {
-			alert('no places found');
-			return;
-		}
-
-		var bounds = new mapboxgl.LngLatBounds();
-
-		places.map(function (place) {
-			var html = '\n\t\t\t\t<div class="popup">\n\t\t\t\t\t<a href="/store/' + place.slug + '">\n\t\t\t\t\t\t<img src="/uploads/' + (place.photo || 'store.png') + '" alt="' + place.name + '" width="100%">\n\t\t\t\t\t\t<p><strong>' + place.name + '</strong> - <small>' + place.location.address + '</small></p>\n\t\t\t\t\t</a>\n\t\t\t\t</div>\n\t\t\t';
-			var marker = new mapboxgl.Marker().setLngLat(place.location.coordinates).setPopup(new mapboxgl.Popup().setHTML(html)).addTo(map);
-			marker.place = place;
-			bounds.extend(place.location.coordinates);
-			return marker;
-		});
-		map.fitBounds(bounds, { padding: 100 });
-	});
-}
-
-exports.default = loadPlaces;
-
-/***/ }),
-
-/***/ 39:
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var utils = __webpack_require__(0);
-var bind = __webpack_require__(13);
-var Axios = __webpack_require__(41);
-var defaults = __webpack_require__(3);
+var bind = __webpack_require__(16);
+var Axios = __webpack_require__(43);
+var defaults = __webpack_require__(5);
 
 /**
  * Create an instance of Axios
@@ -3742,15 +4279,15 @@ axios.create = function create(instanceConfig) {
 };
 
 // Expose Cancel & CancelToken
-axios.Cancel = __webpack_require__(10);
-axios.CancelToken = __webpack_require__(40);
-axios.isCancel = __webpack_require__(11);
+axios.Cancel = __webpack_require__(13);
+axios.CancelToken = __webpack_require__(42);
+axios.isCancel = __webpack_require__(14);
 
 // Expose all/spread
 axios.all = function all(promises) {
   return Promise.all(promises);
 };
-axios.spread = __webpack_require__(55);
+axios.spread = __webpack_require__(57);
 
 module.exports = axios;
 
@@ -3758,208 +4295,13 @@ module.exports = axios;
 module.exports.default = axios;
 
 /***/ }),
-
-/***/ 4:
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-// shim for using process in browser
-var process = module.exports = {};
-
-// cached from whatever global is present so that test runners that stub it
-// don't break things.  But we need to wrap it in a try catch in case it is
-// wrapped in strict mode code which doesn't define any globals.  It's inside a
-// function because try/catches deoptimize in certain engines.
-
-var cachedSetTimeout;
-var cachedClearTimeout;
-
-function defaultSetTimout() {
-    throw new Error('setTimeout has not been defined');
-}
-function defaultClearTimeout() {
-    throw new Error('clearTimeout has not been defined');
-}
-(function () {
-    try {
-        if (typeof setTimeout === 'function') {
-            cachedSetTimeout = setTimeout;
-        } else {
-            cachedSetTimeout = defaultSetTimout;
-        }
-    } catch (e) {
-        cachedSetTimeout = defaultSetTimout;
-    }
-    try {
-        if (typeof clearTimeout === 'function') {
-            cachedClearTimeout = clearTimeout;
-        } else {
-            cachedClearTimeout = defaultClearTimeout;
-        }
-    } catch (e) {
-        cachedClearTimeout = defaultClearTimeout;
-    }
-})();
-function runTimeout(fun) {
-    if (cachedSetTimeout === setTimeout) {
-        //normal enviroments in sane situations
-        return setTimeout(fun, 0);
-    }
-    // if setTimeout wasn't available but was latter defined
-    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-        cachedSetTimeout = setTimeout;
-        return setTimeout(fun, 0);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedSetTimeout(fun, 0);
-    } catch (e) {
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-            return cachedSetTimeout.call(null, fun, 0);
-        } catch (e) {
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-            return cachedSetTimeout.call(this, fun, 0);
-        }
-    }
-}
-function runClearTimeout(marker) {
-    if (cachedClearTimeout === clearTimeout) {
-        //normal enviroments in sane situations
-        return clearTimeout(marker);
-    }
-    // if clearTimeout wasn't available but was latter defined
-    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
-        cachedClearTimeout = clearTimeout;
-        return clearTimeout(marker);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedClearTimeout(marker);
-    } catch (e) {
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-            return cachedClearTimeout.call(null, marker);
-        } catch (e) {
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-            return cachedClearTimeout.call(this, marker);
-        }
-    }
-}
-var queue = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
-
-function cleanUpNextTick() {
-    if (!draining || !currentQueue) {
-        return;
-    }
-    draining = false;
-    if (currentQueue.length) {
-        queue = currentQueue.concat(queue);
-    } else {
-        queueIndex = -1;
-    }
-    if (queue.length) {
-        drainQueue();
-    }
-}
-
-function drainQueue() {
-    if (draining) {
-        return;
-    }
-    var timeout = runTimeout(cleanUpNextTick);
-    draining = true;
-
-    var len = queue.length;
-    while (len) {
-        currentQueue = queue;
-        queue = [];
-        while (++queueIndex < len) {
-            if (currentQueue) {
-                currentQueue[queueIndex].run();
-            }
-        }
-        queueIndex = -1;
-        len = queue.length;
-    }
-    currentQueue = null;
-    draining = false;
-    runClearTimeout(timeout);
-}
-
-process.nextTick = function (fun) {
-    var args = new Array(arguments.length - 1);
-    if (arguments.length > 1) {
-        for (var i = 1; i < arguments.length; i++) {
-            args[i - 1] = arguments[i];
-        }
-    }
-    queue.push(new Item(fun, args));
-    if (queue.length === 1 && !draining) {
-        runTimeout(drainQueue);
-    }
-};
-
-// v8 likes predictible objects
-function Item(fun, array) {
-    this.fun = fun;
-    this.array = array;
-}
-Item.prototype.run = function () {
-    this.fun.apply(null, this.array);
-};
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-process.versions = {};
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-process.prependListener = noop;
-process.prependOnceListener = noop;
-
-process.listeners = function (name) {
-    return [];
-};
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-process.cwd = function () {
-    return '/';
-};
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-process.umask = function () {
-    return 0;
-};
-
-/***/ }),
-
-/***/ 40:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var Cancel = __webpack_require__(10);
+var Cancel = __webpack_require__(13);
 
 /**
  * A `CancelToken` is an object that can be used to request cancellation of an operation.
@@ -4016,19 +4358,18 @@ CancelToken.source = function source() {
 module.exports = CancelToken;
 
 /***/ }),
-
-/***/ 41:
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var defaults = __webpack_require__(3);
+var defaults = __webpack_require__(5);
 var utils = __webpack_require__(0);
-var InterceptorManager = __webpack_require__(42);
-var dispatchRequest = __webpack_require__(43);
-var isAbsoluteURL = __webpack_require__(51);
-var combineURLs = __webpack_require__(49);
+var InterceptorManager = __webpack_require__(44);
+var dispatchRequest = __webpack_require__(45);
+var isAbsoluteURL = __webpack_require__(53);
+var combineURLs = __webpack_require__(51);
 
 /**
  * Create a new instance of Axios
@@ -4108,8 +4449,7 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 module.exports = Axios;
 
 /***/ }),
-
-/***/ 42:
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4167,17 +4507,16 @@ InterceptorManager.prototype.forEach = function forEach(fn) {
 module.exports = InterceptorManager;
 
 /***/ }),
-
-/***/ 43:
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var utils = __webpack_require__(0);
-var transformData = __webpack_require__(46);
-var isCancel = __webpack_require__(11);
-var defaults = __webpack_require__(3);
+var transformData = __webpack_require__(48);
+var isCancel = __webpack_require__(14);
+var defaults = __webpack_require__(5);
 
 /**
  * Throws a `Cancel` if cancellation has been requested.
@@ -4234,8 +4573,7 @@ module.exports = function dispatchRequest(config) {
 };
 
 /***/ }),
-
-/***/ 44:
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4261,14 +4599,13 @@ module.exports = function enhanceError(error, config, code, response) {
 };
 
 /***/ }),
-
-/***/ 45:
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var createError = __webpack_require__(12);
+var createError = __webpack_require__(15);
 
 /**
  * Resolve or reject a Promise based on response status.
@@ -4288,8 +4625,7 @@ module.exports = function settle(resolve, reject, response) {
 };
 
 /***/ }),
-
-/***/ 46:
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4315,8 +4651,7 @@ module.exports = function transformData(data, headers, fns) {
 };
 
 /***/ }),
-
-/***/ 47:
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4357,8 +4692,7 @@ function btoa(input) {
 module.exports = btoa;
 
 /***/ }),
-
-/***/ 48:
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4425,8 +4759,7 @@ module.exports = function buildURL(url, params, paramsSerializer) {
 };
 
 /***/ }),
-
-/***/ 49:
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4445,39 +4778,7 @@ module.exports = function combineURLs(baseURL, relativeURL) {
 };
 
 /***/ }),
-
-/***/ 5:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-var g;
-
-// This works in non-strict mode
-g = function () {
-	return this;
-}();
-
-try {
-	// This works if eval is allowed (see CSP)
-	g = g || Function("return this")() || (1, eval)("this");
-} catch (e) {
-	// This works if the window reference is available
-	if ((typeof window === "undefined" ? "undefined" : _typeof(window)) === "object") g = window;
-}
-
-// g can still be undefined, but nothing to do about it...
-// We return undefined, instead of nothing here, so it's
-// easier to handle this case. if(!global) { ...}
-
-module.exports = g;
-
-/***/ }),
-
-/***/ 50:
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4536,8 +4837,7 @@ function nonStandardBrowserEnv() {
 }();
 
 /***/ }),
-
-/***/ 51:
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4559,8 +4859,7 @@ module.exports = function isAbsoluteURL(url) {
 };
 
 /***/ }),
-
-/***/ 52:
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4629,8 +4928,7 @@ function nonStandardBrowserEnv() {
 }();
 
 /***/ }),
-
-/***/ 53:
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4648,8 +4946,7 @@ module.exports = function normalizeHeaderName(headers, normalizedName) {
 };
 
 /***/ }),
-
-/***/ 54:
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4694,8 +4991,7 @@ module.exports = function parseHeaders(headers) {
 };
 
 /***/ }),
-
-/***/ 55:
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4729,8 +5025,7 @@ module.exports = function spread(callback) {
 };
 
 /***/ }),
-
-/***/ 56:
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4857,7 +5152,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	// Some AMD build optimizers, like r.js, check for specific condition patterns
 	// like the following:
-	if ("function" == 'function' && _typeof(__webpack_require__(14)) == 'object' && __webpack_require__(14)) {
+	if ("function" == 'function' && _typeof(__webpack_require__(17)) == 'object' && __webpack_require__(17)) {
 		!(__WEBPACK_AMD_DEFINE_RESULT__ = function () {
 			return base64;
 		}.call(exports, __webpack_require__, exports, module),
@@ -4877,11 +5172,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		root.base64 = base64;
 	}
 })(undefined);
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(68)(module), __webpack_require__(5)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(70)(module), __webpack_require__(7)))
 
 /***/ }),
-
-/***/ 57:
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5694,8 +5988,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-
-/***/ 58:
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6035,8 +6328,7 @@ if (true) {
 }
 
 /***/ }),
-
-/***/ 59:
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6484,42 +6776,7 @@ function once(emitter, name) {
 }
 
 /***/ }),
-
-/***/ 6:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var browser = __webpack_require__(25);
-var MapiClient = __webpack_require__(7);
-
-function BrowserClient(options) {
-  MapiClient.call(this, options);
-}
-BrowserClient.prototype = Object.create(MapiClient.prototype);
-BrowserClient.prototype.constructor = BrowserClient;
-
-BrowserClient.prototype.sendRequest = browser.browserSend;
-BrowserClient.prototype.abortRequest = browser.browserAbort;
-
-/**
- * Create a client for the browser.
- *
- * @param {Object} options
- * @param {string} options.accessToken
- * @param {string} [options.origin]
- * @returns {MapiClient}
- */
-function createBrowserClient(options) {
-  return new BrowserClient(options);
-}
-
-module.exports = createBrowserClient;
-
-/***/ }),
-
-/***/ 60:
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6670,8 +6927,7 @@ module.exports = createBrowserClient;
 })();
 
 /***/ }),
-
-/***/ 61:
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6685,8 +6941,7 @@ module.exports = function (x) {
 };
 
 /***/ }),
-
-/***/ 62:
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7067,11 +7322,10 @@ function toNumber(value) {
 }
 
 module.exports = debounce;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
-
-/***/ 63:
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7124,11 +7378,10 @@ module.exports = function (size) {
   }
   return id;
 };
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
 
 /***/ }),
-
-/***/ 64:
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7187,8 +7440,7 @@ module.exports = function (size) {
 });
 
 /***/ }),
-
-/***/ 65:
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7250,12 +7502,11 @@ module.exports = function (size) {
  * new Suggestions(input, data);
  */
 
-var Suggestions = __webpack_require__(67);
+var Suggestions = __webpack_require__(69);
 window.Suggestions = module.exports = Suggestions;
 
 /***/ }),
-
-/***/ 66:
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7372,16 +7623,15 @@ List.prototype.drawError = function (msg) {
 module.exports = List;
 
 /***/ }),
-
-/***/ 67:
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var extend = __webpack_require__(1);
-var fuzzy = __webpack_require__(60);
-var List = __webpack_require__(66);
+var fuzzy = __webpack_require__(62);
+var List = __webpack_require__(68);
 
 var Suggestions = function Suggestions(el, data, options) {
   options = options || {};
@@ -7637,8 +7887,7 @@ Suggestions.prototype.renderError = function (msg) {
 module.exports = Suggestions;
 
 /***/ }),
-
-/***/ 68:
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7668,318 +7917,48 @@ module.exports = function (module) {
 };
 
 /***/ }),
-
-/***/ 69:
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-__webpack_require__(18);
+__webpack_require__(21);
 
-var _bling = __webpack_require__(16);
+var _bling = __webpack_require__(3);
 
-var _autocomplete = __webpack_require__(15);
+var _autocomplete = __webpack_require__(18);
 
 var _autocomplete2 = _interopRequireDefault(_autocomplete);
 
-var _typeAhead = __webpack_require__(17);
+var _typeAhead = __webpack_require__(20);
 
 var _typeAhead2 = _interopRequireDefault(_typeAhead);
 
-var _loadPlaces = __webpack_require__(383);
+var _loadPlaces = __webpack_require__(8);
 
 var _loadPlaces2 = _interopRequireDefault(_loadPlaces);
+
+var _heart = __webpack_require__(19);
+
+var _heart2 = _interopRequireDefault(_heart);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 (0, _autocomplete2.default)((0, _bling.$)('#address'), (0, _bling.$)('#lat'), (0, _bling.$)('#lng'));
 (0, _typeAhead2.default)((0, _bling.$)('.search'));
-(0, _loadPlaces2.default)();
+
+if ((0, _bling.$)('#map')) {
+	(0, _loadPlaces2.default)();
+}
+
 (0, _autocomplete2.default)((0, _bling.$)('#mapSearch'));
 
-/***/ }),
-
-/***/ 7:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var parseToken = __webpack_require__(8);
-var MapiRequest = __webpack_require__(27);
-var constants = __webpack_require__(2);
-
-/**
- * A low-level Mapbox API client. Use it to create service clients
- * that share the same configuration.
- *
- * Services and `MapiRequest`s use the underlying `MapiClient` to
- * determine how to create, send, and abort requests in a way
- * that is appropriate to the configuration and environment
- * (Node or the browser).
- *
- * @class MapiClient
- * @property {string} accessToken - The Mapbox access token assigned
- *   to this client.
- * @property {string} [origin] - The origin
- *   to use for API requests. Defaults to https://api.mapbox.com.
- */
-
-function MapiClient(options) {
-  if (!options || !options.accessToken) {
-    throw new Error('Cannot create a client without an access token');
-  }
-  // Try parsing the access token to determine right away if it's valid.
-  parseToken(options.accessToken);
-
-  this.accessToken = options.accessToken;
-  this.origin = options.origin || constants.API_ORIGIN;
-}
-
-MapiClient.prototype.createRequest = function createRequest(requestOptions) {
-  return new MapiRequest(this, requestOptions);
-};
-
-module.exports = MapiClient;
-
-/***/ }),
-
-/***/ 8:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var base64 = __webpack_require__(56);
-
-var tokenCache = {};
-
-function parseToken(token) {
-  if (tokenCache[token]) {
-    return tokenCache[token];
-  }
-
-  var parts = token.split('.');
-  var usage = parts[0];
-  var rawPayload = parts[1];
-  if (!rawPayload) {
-    throw new Error('Invalid token');
-  }
-
-  var parsedPayload = parsePaylod(rawPayload);
-
-  var result = {
-    usage: usage,
-    user: parsedPayload.u
-  };
-  if (has(parsedPayload, 'a')) result.authorization = parsedPayload.a;
-  if (has(parsedPayload, 'exp')) result.expires = parsedPayload.exp * 1000;
-  if (has(parsedPayload, 'iat')) result.created = parsedPayload.iat * 1000;
-  if (has(parsedPayload, 'scopes')) result.scopes = parsedPayload.scopes;
-  if (has(parsedPayload, 'client')) result.client = parsedPayload.client;
-  if (has(parsedPayload, 'll')) result.lastLogin = parsedPayload.ll;
-  if (has(parsedPayload, 'iu')) result.impersonator = parsedPayload.iu;
-
-  tokenCache[token] = result;
-  return result;
-}
-
-function parsePaylod(rawPayload) {
-  try {
-    return JSON.parse(base64.decode(rawPayload));
-  } catch (parseError) {
-    throw new Error('Invalid token');
-  }
-}
-
-function has(obj, key) {
-  return Object.prototype.hasOwnProperty.call(obj, key);
-}
-
-module.exports = parseToken;
-
-/***/ }),
-
-/***/ 9:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(process) {
-
-var utils = __webpack_require__(0);
-var settle = __webpack_require__(45);
-var buildURL = __webpack_require__(48);
-var parseHeaders = __webpack_require__(54);
-var isURLSameOrigin = __webpack_require__(52);
-var createError = __webpack_require__(12);
-var btoa = typeof window !== 'undefined' && window.btoa && window.btoa.bind(window) || __webpack_require__(47);
-
-module.exports = function xhrAdapter(config) {
-  return new Promise(function dispatchXhrRequest(resolve, reject) {
-    var requestData = config.data;
-    var requestHeaders = config.headers;
-
-    if (utils.isFormData(requestData)) {
-      delete requestHeaders['Content-Type']; // Let the browser set it
-    }
-
-    var request = new XMLHttpRequest();
-    var loadEvent = 'onreadystatechange';
-    var xDomain = false;
-
-    // For IE 8/9 CORS support
-    // Only supports POST and GET calls and doesn't returns the response headers.
-    // DON'T do this for testing b/c XMLHttpRequest is mocked, not XDomainRequest.
-    if (process.env.NODE_ENV !== 'test' && typeof window !== 'undefined' && window.XDomainRequest && !('withCredentials' in request) && !isURLSameOrigin(config.url)) {
-      request = new window.XDomainRequest();
-      loadEvent = 'onload';
-      xDomain = true;
-      request.onprogress = function handleProgress() {};
-      request.ontimeout = function handleTimeout() {};
-    }
-
-    // HTTP basic authentication
-    if (config.auth) {
-      var username = config.auth.username || '';
-      var password = config.auth.password || '';
-      requestHeaders.Authorization = 'Basic ' + btoa(username + ':' + password);
-    }
-
-    request.open(config.method.toUpperCase(), buildURL(config.url, config.params, config.paramsSerializer), true);
-
-    // Set the request timeout in MS
-    request.timeout = config.timeout;
-
-    // Listen for ready state
-    request[loadEvent] = function handleLoad() {
-      if (!request || request.readyState !== 4 && !xDomain) {
-        return;
-      }
-
-      // The request errored out and we didn't get a response, this will be
-      // handled by onerror instead
-      // With one exception: request that using file: protocol, most browsers
-      // will return status as 0 even though it's a successful request
-      if (request.status === 0 && !(request.responseURL && request.responseURL.indexOf('file:') === 0)) {
-        return;
-      }
-
-      // Prepare the response
-      var responseHeaders = 'getAllResponseHeaders' in request ? parseHeaders(request.getAllResponseHeaders()) : null;
-      var responseData = !config.responseType || config.responseType === 'text' ? request.responseText : request.response;
-      var response = {
-        data: responseData,
-        // IE sends 1223 instead of 204 (https://github.com/mzabriskie/axios/issues/201)
-        status: request.status === 1223 ? 204 : request.status,
-        statusText: request.status === 1223 ? 'No Content' : request.statusText,
-        headers: responseHeaders,
-        config: config,
-        request: request
-      };
-
-      settle(resolve, reject, response);
-
-      // Clean up request
-      request = null;
-    };
-
-    // Handle low level network errors
-    request.onerror = function handleError() {
-      // Real errors are hidden from us by the browser
-      // onerror should only fire if it's a network error
-      reject(createError('Network Error', config));
-
-      // Clean up request
-      request = null;
-    };
-
-    // Handle timeout
-    request.ontimeout = function handleTimeout() {
-      reject(createError('timeout of ' + config.timeout + 'ms exceeded', config, 'ECONNABORTED'));
-
-      // Clean up request
-      request = null;
-    };
-
-    // Add xsrf header
-    // This is only done if running in a standard browser environment.
-    // Specifically not if we're in a web worker, or react-native.
-    if (utils.isStandardBrowserEnv()) {
-      var cookies = __webpack_require__(50);
-
-      // Add xsrf header
-      var xsrfValue = (config.withCredentials || isURLSameOrigin(config.url)) && config.xsrfCookieName ? cookies.read(config.xsrfCookieName) : undefined;
-
-      if (xsrfValue) {
-        requestHeaders[config.xsrfHeaderName] = xsrfValue;
-      }
-    }
-
-    // Add headers to the request
-    if ('setRequestHeader' in request) {
-      utils.forEach(requestHeaders, function setRequestHeader(val, key) {
-        if (typeof requestData === 'undefined' && key.toLowerCase() === 'content-type') {
-          // Remove Content-Type if data is undefined
-          delete requestHeaders[key];
-        } else {
-          // Otherwise add header to the request
-          request.setRequestHeader(key, val);
-        }
-      });
-    }
-
-    // Add withCredentials to request if needed
-    if (config.withCredentials) {
-      request.withCredentials = true;
-    }
-
-    // Add responseType to request if needed
-    if (config.responseType) {
-      try {
-        request.responseType = config.responseType;
-      } catch (e) {
-        if (request.responseType !== 'json') {
-          throw e;
-        }
-      }
-    }
-
-    // Handle progress if needed
-    if (typeof config.onDownloadProgress === 'function') {
-      request.addEventListener('progress', config.onDownloadProgress);
-    }
-
-    // Not all browsers support upload events
-    if (typeof config.onUploadProgress === 'function' && request.upload) {
-      request.upload.addEventListener('progress', config.onUploadProgress);
-    }
-
-    if (config.cancelToken) {
-      // Handle cancellation
-      config.cancelToken.promise.then(function onCanceled(cancel) {
-        if (!request) {
-          return;
-        }
-
-        request.abort();
-        reject(cancel);
-        // Clean up request
-        request = null;
-      });
-    }
-
-    if (requestData === undefined) {
-      requestData = null;
-    }
-
-    // Send the request
-    request.send(requestData);
-  });
-};
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
+//$$ = queryselectoorall
+var heartForms = (0, _bling.$$)('form.heart');
+//add eventlistener to all hearts
+heartForms.on('submit', _heart2.default);
 
 /***/ })
-
-/******/ });
+/******/ ]);
 //# sourceMappingURL=App.bundle.js.map

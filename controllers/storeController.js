@@ -3,6 +3,7 @@ const Store = mongoose.model('Store');
 const multer = require("multer");
 const jimp = require("jimp");
 const uuid = require("uuid");
+const User = require("../models/User");
 
 
 
@@ -195,4 +196,41 @@ exports.mapStores = async(req,res)=>{
 
 exports.mapPage = (req,res) => {
 	res.render('map', {title:'Map'})
+}
+
+//toggle heart for user
+exports.heartStore = async (req,res) => {
+	const hearts = req.user.hearts.map(obj => obj.toString());
+
+	//$pull is remove, $addToSet is unique add
+	const operator = hearts.includes(req.params.id)?'$pull':'$addToSet';
+	const user = await User
+		.findByIdAndUpdate(req.user._id,
+		{	[operator]: {hearts: req.params.id}},
+		{new: true}	//will return the updated user
+	)
+	res.json(user)
+}
+
+// exports.heartsPage = (req,res) => {
+// 	res.render('hearts', {title:'Favourites'})
+// }
+
+exports.heartsPage = async (req,res) => {
+
+	const hearted = await Store.find({
+		_id: {$in: req.user.hearts}
+	});
+	//render the hearted stores to the hearts pug file
+	// res.render('hearts', {
+	// 	title: 'Favourite Stores',
+	// 	hearted
+	// });
+	//didn't need to create a new pug file, could use the existing stores pug file .. DOH
+
+	res.render('stores', {
+		title: 'Favourite Stores',
+		stores:hearted
+	});
+
 }
