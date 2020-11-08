@@ -71,7 +71,8 @@ exports.getStores = async (req, res) => {
 	const storesPromise = Store
 	.find()
 	.skip(skip)
-	.limit(limit);
+	.limit(limit)
+	.sort({created: 'desc'})
 
 	//get the total number of stores
 	const countPromise = Store.count();
