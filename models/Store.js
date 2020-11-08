@@ -41,6 +41,9 @@ const storeSchema = new mongoose.Schema({
 		ref: 'User',
 		required: 'You must supply an author'
 	}
+}, {
+	toJSON: {virtuals: true},
+	toObject: {virtuals: true} //show virtual fields, good for debugging
 });
 
 //Define indexes on database
@@ -101,5 +104,50 @@ storeSchema.statics.getTagsList = function () {
 		}
 	]);
 }
+
+storeSchema.statics.getTopStores = function(){
+	//aggregate is a query function (like, .find, but can do more);
+	return this.aggregate([
+		//lookup stores, and populate their reviews. (like a join)
+		{$lookup: {from: 'reviews', localField: '_id', foreignField: 'store', as: 'reviews'}},
+		//filter for stores that only have 2 or more reviews
+		// reviews.0 would be the 0 index, reviews.1 is the 1 index (so filter if there are more than one)
+		{$match: {'reviews.1': {$exists:true}}},
+		// add the average reviews field
+		{$project: {
+			//use mongo avg to add an avergaerating field
+			averageRating: { $avg: '$reviews.rating' },
+			//project will replace the existing data with just the average reviews. on another version of mongo (>3.4 and not on atlas tier) you could use $add instead. We are sticking with project and will manually add the other required fields.
+			photo: '$$ROOT.photo', //use $$root to grab the original values back
+			name: '$$ROOT.name',
+			reviews: '$$ROOT.reviews',
+			slug: '$$ROOT.slug',
+		}},
+		//sort by new (average) highest first
+		{$sort: {averageRating: -1}}, //highest to lowest
+		//limit to 10 results
+		{$limit: 10},
+	]);
+}
+
+
+//go pick up the reviews (like a join)
+// fin reviews where store _id property === reviews store property
+storeSchema.virtual('reviews', {
+	ref: 'Review', //which model to link //join on local field == foreign field
+	localField: '_id', //  (which field on the store?)
+	foreignField: 'store' // which field on the review?
+})
+
+
+function autoPopulate(next){
+	this.populate('reviews');
+	next();
+}
+
+//hooks to run autopopulate on find and fineone
+storeSchema.pre('find', autoPopulate);
+storeSchema.pre('findOne', autoPopulate);
+
 
 module.exports = mongoose.model('Store', storeSchema);

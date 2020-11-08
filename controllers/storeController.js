@@ -116,7 +116,7 @@ exports.updateStore = async (req, res) => {
 exports.getStoreBySlug = async (req, res, next) => {
 	const store = await Store.findOne({
 		slug: req.params.slug
-	}).populate('author') //.populate will get the rest of the author details from the id.
+	}).populate('author reviews') //.populate will get the rest of the author details from the id.
 	if (!store) {
 		return next();
 	}
@@ -233,4 +233,10 @@ exports.heartsPage = async (req,res) => {
 		stores:hearted
 	});
 
+}
+
+
+exports.getTopStores = async (req,res) => {
+	const stores = await Store.getTopStores();
+	res.render('top', {stores, title:'Top Rated Stores'});
 }
