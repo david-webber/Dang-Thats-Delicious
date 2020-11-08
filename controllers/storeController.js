@@ -64,12 +64,39 @@ exports.createStore = async (req, res) => {
 
 
 exports.getStores = async (req, res) => {
+	const page = req.params.page || 1;
+	const limit = 4;
+	const skip = (page * limit) - limit;
 	//query DB for list of all stores
-	const stores = await Store.find();
+	const storesPromise = Store
+	.find()
+	.skip(skip)
+	.limit(limit);
+
+	//get the total number of stores
+	const countPromise = Store.count();
+
+	//get the stores (limited) and the count
+	const [stores, count] = await Promise.all([storesPromise,countPromise]);
+
+	//get upperbound for pages
+	const lastPage = Math.ceil(count / limit);
+
+	//make sure there are stores for the page requested before render
+	if(!stores.length && skip){
+		req.flash('info', `Hey you asked for page ${page}, but that doesn't exist. So I put you on page ${lastPage}`);
+		res.redirect(`/stores/page/${lastPage}`);
+		return;
+
+	}
+
 	//render all stores
 	res.render('stores', {
 		title: 'Stores',
-		stores
+		stores,
+		count,
+		pages: lastPage,
+		page
 	});
 }
 
